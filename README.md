@@ -8,31 +8,81 @@
 
 ## 快速开始（3步上手）
 
-### 第1步：安装
+### 方式1：用户安装（推荐）
+
+适合只想使用工具的用户。
+
+#### 第1步：安装
 
 ```bash
-# 克隆仓库
+pip install mcp-security-scanner
+```
+
+#### 第2步：复制示例代码
+
+创建文件 `my_scan.py`，复制以下内容：
+
+```python
+from mcp_security_scanner import MCPSecurityScanner, MCPTool
+
+# 创建扫描器
+scanner = MCPSecurityScanner()
+
+# 定义你的工具列表（从你的MCP server获取）
+tools = [
+    MCPTool(
+        name="get_weather",
+        description="Get current weather for a location",
+        input_schema={"type": "object", "properties": {"location": {"type": "string"}}}
+    )
+]
+
+# 执行扫描
+result = scanner.scan_tools_only(tools)
+print(f"安全评分: {result.score}/100")
+
+# 查看漏洞
+for vuln in result.vulnerabilities:
+    print(f"- [{vuln.severity}] {vuln.name}")
+
+# 保存报告
+result.save_report("report.html")
+```
+
+#### 第3步：运行
+
+```bash
+python my_scan.py
+```
+
+运行后会生成 `report.html` 报告文件。
+
+---
+
+### 方式2：开发者安装
+
+适合想看完整示例或贡献代码的开发者。
+
+#### 第1步：克隆仓库
+
+```bash
 git clone https://github.com/BrentZhang1214/mcp-security-scanner
 cd mcp-security-scanner
 
-# 创建虚拟环境并安装
 python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -e .
 ```
 
-### 第2步：扫描MCP Server
+#### 第2步：运行测试脚本
 
 ```bash
-# 运行测试脚本（包含模拟恶意工具）
 python examples/test_real_detection.py
 ```
 
 运行后会生成 `real-detection-report.html` 报告文件。
 
-### 第3步：查看报告
-
-打开浏览器查看报告：
+#### 第3步：查看报告
 
 ```bash
 # Linux/WSL
